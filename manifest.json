@@ -1,22 +1,31 @@
 {
-   "background_page": "background.html",
-   "content_scripts": [ {
-      "css": [ "general.css" ],
+  "name": "Popup Hatebu Comment",
+  "version": "0.0.8",
+  "description": "Popup Hatena Bookmark commments.",
+  "content_scripts": [
+    {
       "js": [ "content.js" ],
+      "css": [ "general.css" ],
       "matches": [ "http://*/*", "https://*/*" ],
       "run_at": "document_end"
-   } ],
-   "description": "Popup Hatena Bookmark commments.",
-   "icons": {
-      "128": "app_icon_128.png",
-      "16": "app_icon_16.png",
-      "32": "app_icon_32.png",
-      "48": "app_icon_48.png"
-   },
-   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+R86pYyNYEfFaSvKJJ6snVlR1YOsMeX4qhStw7sjv9onQLv4BjMYrCTVq9DLlndI3AVyxAxVFPk3u+mfc9tPw2eL2LkNb87cokn1hKPyHjtiMyVQUL4U929viLr8TAn3JyGhWZDD7+9Jg9TEprDGA6XpTSQKqlyklUvudkflx/wIDAQAB",
-   "name": "Popup Hatebu Comment",
-   "options_page": "options.html",
-   "permissions": [ "tabs", "http://b.hatena.ne.jp/entry/*" ],
-   "update_url": "http://clients2.google.com/service/update2/crx",
-   "version": "0.0.8"
+    }
+  ],
+  "page_action": {
+    "default_icon": "/pa_icon.png",
+    "default_title": "Hatea bookmark comments",
+    "default_popup": "popup.html"
+  },
+  "background_page": "background.html",
+  "icons": {
+    "128": "app_icon_128.png",
+    "16": "app_icon_16.png",
+    "32": "app_icon_32.png",
+    "48": "app_icon_48.png"
+  },
+  "options_page": "options.html",
+  "permissions": [
+    "tabs",
+    "http://b.hatena.ne.jp/entry/*",
+    "http://api.b.st-hatena.com/entry.count"
+  ]
 }
