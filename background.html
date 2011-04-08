@@ -75,29 +75,24 @@ function updateCounter(tabId) {
 	chrome.tabs.get(tabId, function(tab) {
 		tab.url = tab.url.replace(/#.+$/, '');
 		if (/http:\/\//.test(tab.url)) {
-			chrome.pageAction.show(tab.id);
 //			if (!counterCaches[tab.url]) {
 				var http = new XMLHttpRequest();
 				http.open('GET', 'http://api.b.st-hatena.com/entry.count?url=' + encodeURIComponent(tab.url), true);
 				http.onload = function(res){
 					if(http.status != 200){ return http.onerror(http.statusText) }
 //					counterCaches[tab.url] = http.responseText;
-//					chrome.browserAction.setBadgeText({ text: http.responseText, tabId: tab.id });
-					chrome.pageAction.setTitle({ title: (http.responseText != '') ? http.responseText + ' users' : '', tabId: tab.id });
+					chrome.browserAction.setBadgeText({ text: http.responseText, tabId: tab.id });
 				};
 				http.onerror = function(e){
 //					counterCaches[tab.url] = '';
-//					chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
-					chrome.pageAction.setTitle({ title: 'error', tabId: tab.id });
+					chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
 				};
 				http.send(null);
 //			} else {
 //				chrome.browserAction.setBadgeText({ text: couterCache[tab.url], tabId: tab.id });
 //			}
 		} else if (/https:\/\//.test(tab.url)) {
-//			chrome.browserAction.setBadgeText({ text: '?', tabId: tab.id });
-			chrome.pageAction.show(tab.id);
-			chrome.pageAction.setTitle({ title: '', tabId: tab.id });
+			chrome.browserAction.setBadgeText({ text: '?', tabId: tab.id });
 		}
 	});
 }
@@ -115,27 +110,30 @@ function initCounter() {
 }
 
 function hideCounter(){
-//	chrome.browserAction.setBadgeText({ text: '' });
+	chrome.browserAction.setBadgeText({ text: '' });
 	chrome.windows.getAll({ populate: true }, function(windows) {
 		windows.forEach(function(window) {
 			window.tabs.forEach(function(tab) {
-//				chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
-				chrome.pageAction.hide(tab.id);
+				chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
 			});
 		});
 	});
 	chrome.tabs.onUpdated.removeListener(updateCounter);
 }
+/*
 if (!options.HideCounter) {
 	initCounter();
 }
+*/
 function saveOptions(){
 	localStorage.options = JSON.stringify(options);
+/*
 	if (options.HideCounter) {
 		hideCounter();
 	} else {
 		initCounter();
 	}
+*/
 }
 </script>
 </head>

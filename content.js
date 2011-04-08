@@ -112,13 +112,14 @@
 
 			var pos = rect(this.container);
 			var page = pageRect();
+console.log(pos);
+console.log(page);
 			if (pos.right > page.right)
 				pos.left = page.right - this.container.clientWidth - 20;
 			if (pos.bottom > page.bottom)
 				pos.top = page.bottom - this.container.clientHeight - 20;
 			this.container.style.top = pos.top + 'px';
 			this.container.style.left = pos.left + 'px';
-
 		},
 		hide: function(){
 			document.body.removeChild(this.container);
