@@ -7,86 +7,54 @@
 body{
 }
 p{
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 #wrap {
-	width: 600px;
-	margin: 0 auto;
+    width: 600px;
+    margin: 0 auto;
 }
 h1 {
-	border-radius: 3px;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.6)));
-	text-align: center;
-	background-color: #5279E7;
-	color: white;
-	text-shadow: 1px 1px 1px #021997;
-	padding: 0.5em;
-	-webkit-box-shadow: 1px 1px 1px gray;
+    border-radius: 3px;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.6)));
+    text-align: center;
+    background-color: #5279E7;
+    color: white;
+    text-shadow: 1px 1px 1px #021997;
+    padding: 0.5em;
+    -webkit-box-shadow: 1px 1px 1px gray;
 }
 h2 {
-	font-size: 100%;
-	margin: 0 0 1em 0;
-	color: #5279E7;
+    font-size: 100%;
+    margin: 0 0 1em 0;
+    color: #5279E7;
 }
 div.group {
-	border-radius: 3px;
-	border: 1px solid #82a9f7;
-	-webkit-box-shadow: 1px 1px 1px gray;
-	padding: 1em;
-	margin-bottom: 20px;
+    border-radius: 3px;
+    border: 1px solid #82a9f7;
+    -webkit-box-shadow: 1px 1px 1px gray;
+    padding: 1em;
+    margin-bottom: 20px;
 }
 div.item {
-	margin-top: 1em;
-	margin-left: 1em;
+    margin-top: 1em;
+    margin-left: 1em;
 }
 input[type=range]{
-	width: 20em;
+    width: 20em;
 }
 .value {
-	display: inline-block;
-	border-radius: 3px;
-	border: 1px solid silver;
-	width: 5em;
-	text-align: right;
+    display: inline-block;
+    border-radius: 3px;
+    border: 1px solid silver;
+    width: 5em;
+    text-align: right;
 }
 .tips {
-	color: gray;
+    color: gray;
 }
 </style>
-<script type="text/javascript">
-window.addEventListener('load', function(e){
-	var bg = chrome.extension.getBackgroundPage();
-	Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]')).forEach(function(elm) {
-		elm.checked = bg.options[elm.id];
-		elm.addEventListener('click', function(e){
-			bg.options[e.target.id] = e.target.checked;
-			bg.saveOptions();
-		}, false);
-	});
-	Array.prototype.slice.call(document.querySelectorAll('input[type="range"]')).forEach(function(elm) {
-		elm.value = bg.options[elm.id];
-		var output = document.getElementById(elm.id + '_val');
-		output.textContent = elm.value;
-		elm.addEventListener('change', function(e){
-			bg.options[e.target.id] = e.target.value;
-			output.textContent = e.target.value;
-			bg.saveOptions();
-		}, false);
-	});
-
-	var over = document.getElementById('ShowInMouseOver');
-	var overDelayUpdate = function (){
-		if (over.checked) {
-			document.getElementById('OverDelay').disabled = false;
-		} else {
-			document.getElementById('OverDelay').disabled = true;
-		}
-	}
-	over.addEventListener('click', overDelayUpdate, false);
-	overDelayUpdate();
-}, false);
-</script>
+<script src="options.js"></script>
 </head>
 <body>
   <div id="wrap">

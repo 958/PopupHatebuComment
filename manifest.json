@@ -1,4 +1,5 @@
 {
+  "manifest_version": 2,
   "name": "Popup Hatebu Comment",
   "version": "0.0.8",
   "description": "Popup Hatena Bookmark commments.",
@@ -15,7 +16,9 @@
     "default_title": "Hatea bookmark comments",
     "default_popup": "popup.html"
   },
-  "background_page": "background.html",
+  "background": {
+    "scripts": [ "background.js" ]
+  },
   "icons": {
     "128": "app_icon_128.png",
     "16": "app_icon_16.png",
