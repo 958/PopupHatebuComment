@@ -1,10 +1,11 @@
 ﻿(function(){
     var options = {};
-    chrome.extension.sendRequest(
+    chrome.runtime.sendMessage(
         {
             action: 'options.get'
         },
         function(res) {
+            console.dir(res);
             options = res;
             init();
         }
@@ -24,14 +25,14 @@
             this.content = document.createElement('ul');
             this.container.appendChild(this.content);
             var pos = rect(elm);
-            this.container.style.top = pos.top + 'px';
+            this.container.style.top = pos.bottom + 'px';
             this.container.style.left = pos.left + 'px';
             document.body.appendChild(this.container);
             this._request(elm.href);
         },
         _request: function(url) {
             var self = this;
-            chrome.extension.sendRequest({
+            chrome.runtime.sendMessage({
                 action: 'link.load',
                 url: url
             }, function(res){
@@ -62,25 +63,23 @@
                 if (!options['ShowNoComment'] && user.comment == '') continue;
                 html.push([
                     '<li class="__popup_hatebu_comment_user"><img class="__popup_hatebu_comment_icon" src="http://www.hatena.ne.jp/users/', name.substring(0,2), '/', name, '/profile_s.gif">',
-                    '<a class="__popup_hatebu_comment_name" href="http://b.hatena.ne.jp/', name, '/', date, '#bookmark-', json.eid, '">', name, '</a>',
+                    '<a class="__popup_hatebu_comment_name" href="https://b.hatena.ne.jp/', name, '/', date, '#bookmark-', json.eid, '">', name, '</a>',
                     '<span class="__popup_hatebu_comment_tags">',
                     (function(tags){
                         var ret = [];
                         for (var i = 0, l = tags.length; i < l; i++)
-                            ret.push(['<a href="http://b.hatena.ne.jp/', name, '/', tags[i], '/">', tags[i], '</a>'].join(''));
+                            ret.push(['<a href="https://b.hatena.ne.jp/', name, '/', tags[i], '/">', tags[i], '</a>'].join(''));
                         return ret.join(', ');
                     })(user.tags),
                     '</span>', this.toUrlLink(user.comment), '</li>'
                 ].join(''));
                 cnt++;
             }
+            if (cnt == 0) {
+                this.hide();
+                return;
+            }
             this.content.innerHTML = html.join('');
-            var entryPage = document.createElement('a');
-            entryPage.href = this.target.href;
-            entryPage.target = '_blank';
-            entryPage.innerHTML = '<img src="http://b.hatena.ne.jp/entry/image/' + json.url + '">';
-            entryPage.className = '__popup_hatebu_comment_hatebu_entry_page_link';
-            this.container.insertBefore(entryPage, this.content);
 
             var self = this;
             if (!options['ShowInMouseOver']) {
@@ -110,6 +109,7 @@
             }
             this.container.className = '__popup_hatebu_comment_container';
 
+            /*
             var pos = rect(this.container);
             var page = pageRect();
             if (pos.right > page.right)
@@ -118,7 +118,7 @@
                 pos.top = page.bottom - this.container.clientHeight - 20;
             this.container.style.top = pos.top + 'px';
             this.container.style.left = pos.left + 'px';
-
+            */
         },
         hide: function(){
             document.body.removeChild(this.container);
@@ -160,13 +160,13 @@
     }
 
     function rect(elem) {
-        var left = 0, top = 0, results;
+        const {left: bleft,top: btop} = document.body.getBoundingClientRect();
         var box = elem.getBoundingClientRect();
         return {
-            left: box.left + document.body.scrollLeft,
-            top: box.top  + document.body.scrollTop,
-            right: box.right + document.body.scrollLeft,
-            bottom: box.bottom + document.body.scrollTop
+            left: box.left + window.pageXOffset,
+            top: box.top + window.pageYOffset,
+            right: box.right + window.pageXOffset,
+            bottom: box.bottom + window.pageYOffset,
         };
     }
 
@@ -187,7 +187,7 @@
                 var target = e.target;
                 while (target && target.nodeName != 'A' && target.nodeName != 'HTML')
                     target = target.parentElement;
-                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^http:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
+                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^https?:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
                     new HatebuComments(target);
                     e.preventDefault();
                 }
@@ -198,7 +198,7 @@
                 var target = e.target;
                 while (target && target.nodeName != 'A' && target.nodeName != 'HTML')
                     target = target.parentElement;
-                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^http:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
+                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^https?:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
                     target.isOver = true;
                     timer = setTimeout(function(){
                         delete target.isOver;
@@ -210,7 +210,7 @@
                 var target = e.target;
                 while (target && target.nodeName != 'A' && target.nodeName != 'HTML')
                     target = target.parentElement;
-                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^http:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
+                if (target && target.nodeName == 'A' && target.href && target.className.indexOf('__popup_hatebu_comment_hatebu_entry_page_link') == -1 && /^https?:\/\/b\.hatena\.ne\.jp\/entry\/.+/.test(target.href)){
                     if (target.isOver == true) {
                         delete target.isOver;
                         clearTimeout(timer);

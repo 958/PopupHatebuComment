@@ -1,21 +1,22 @@
 window.addEventListener('load', function(e){
-    var bg = chrome.extension.getBackgroundPage();
-    Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]')).forEach(function(elm) {
-        elm.checked = bg.options[elm.id];
-        elm.addEventListener('click', function(e){
-            bg.options[e.target.id] = e.target.checked;
-            bg.saveOptions();
-        }, false);
-    });
-    Array.prototype.slice.call(document.querySelectorAll('input[type="range"]')).forEach(function(elm) {
-        elm.value = bg.options[elm.id];
-        var output = document.getElementById(elm.id + '_val');
-        output.textContent = elm.value;
-        elm.addEventListener('change', function(e){
-            bg.options[e.target.id] = e.target.value;
-            output.textContent = e.target.value;
-            bg.saveOptions();
-        }, false);
+    chrome.runtime.sendMessage({ action: 'options.get' }, function(options) {
+        Array.prototype.slice.call(document.querySelectorAll('input[type="checkbox"]')).forEach(function(elm) {
+            elm.checked = options[elm.id];
+            elm.addEventListener('click', function(e){
+                options[e.target.id] = e.target.checked;
+                chrome.runtime.sendMessage({ action: 'options.save', options: options });
+            }, false);
+        });
+        Array.prototype.slice.call(document.querySelectorAll('input[type="range"]')).forEach(function(elm) {
+            elm.value = options[elm.id];
+            var output = document.getElementById(elm.id + '_val');
+            output.textContent = elm.value;
+            elm.addEventListener('change', function(e){
+                options[e.target.id] = e.target.value;
+                output.textContent = e.target.value;
+                chrome.runtime.sendMessage({ action: 'options.save', options: options });
+            }, false);
+        });
     });
 
     var over = document.getElementById('ShowInMouseOver');

@@ -8,13 +8,14 @@ function getDate(date) {
 }
 
 var options = {};
-chrome.extension.sendRequest(
+chrome.runtime.sendMessage(
     {
         action: 'options.get'
     },
     function(res) {
         options = res;
-        chrome.tabs.getSelected(null, function(tab){
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
+            var tab = tabs[0];
             if (/https?:\/\//.test(tab.url)) {
                 new HatebuComments(tab.url);
             } else {
@@ -38,7 +39,7 @@ HatebuComments.prototype = {
     },
     _request: function() {
         var self = this;
-        chrome.extension.sendRequest({
+        chrome.runtime.sendMessage({
             action: 'page.load',
             url: self.url
         }, function(res){

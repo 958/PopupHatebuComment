@@ -1,98 +1,100 @@
-var default_options = { ShowInMouseOver: false, OverDelay: 500, MaxComments: 100, ShowNoComment: false };
-var options = default_options;
-if (localStorage.options) {
-    options = JSON.parse(localStorage.options);
-    if (!options['MaxComments'])
-        options['MaxComments'] = default_options['MaxComments']
-    if (!options['OverDelay'])
-        options['OverDelay'] = default_options['OverDelay']
+function getOptions(callback) {
+    var default_options = { ShowInMouseOver: false, OverDelay: 500, MaxComments: 100, ShowNoComment: false };
+    chrome.storage.local.get('options', function(data) {
+        var options = data.options || default_options;
+        if (!options['MaxComments'])
+            options['MaxComments'] = default_options['MaxComments'];
+        if (!options['OverDelay'])
+            options['OverDelay'] = default_options['OverDelay'];
+        callback(options);
+    });
 }
 
-function requestEntry(url, sender, res) {
-    var ret = { };
-    var http = new XMLHttpRequest();
-    http.open('GET', url, true);
-    http.onload = function(){
-        if(http.status != 200){ return http.onerror(http.statusText) }
-        ret.result = true;
-        ret.content = JSON.parse(http.responseText);
-        res(ret);
-    };
-    http.onerror = function(e){
-        ret.result = false;
-        ret.reason = e;
-        res(ret);
-    };
-    http.send(null);
+function saveOptions(options, callback) {
+    chrome.storage.local.set({ options: options }, function() {
+        if (callback) callback();
+    });
 }
 
-chrome.extension.onRequest.addListener(function(req, sender, res) {
+chrome.runtime.onMessage.addListener(function(req, sender, res) {
     switch (req.action) {
-    case 'link.load':
-        try{
-            var url = req.url.replace(/(^http:\/\/b\.hatena\.ne\.jp\/entry\/)(.+$)/, function(s0, s1, s2) {
-                var result = s1 + 'jsonlite/';
-                if (s2.indexOf('s/') == 0) {
-                    result += 'https://' + s2.replace('s/', '');
-                } else if (s2.indexOf('http://') != 0) {
-                    result += 'http://' + s2;
-                } else {
-                    result += s2;
-                }
-                return result;
+        case 'link.load':
+            try {
+                var url = req.url.replace(/(^https?:\/\/b\.hatena\.ne\.jp\/entry\/)(.+$)/, function(s0, s1, s2) {
+                    var result = s1 + 'jsonlite/';
+                    if (s2.indexOf('s/') == 0) {
+                        result += 'https://' + s2.replace('s/', '');
+                    } else if (s2.indexOf('https://') != 0) {
+                        result += 'https://' + s2;
+                    } else {
+                        result += s2;
+                    }
+                    return result;
+                });
+                requestEntry(url, sender, res);
+            } catch (e) {
+                var ret = { result: false, reason: e.description };
+                res(ret);
+            }
+            break;
+        case 'page.load':
+            try {
+                var url = 'https://b.hatena.ne.jp/entry/jsonlite/' + req.url;
+                requestEntry(url, sender, res);
+            } catch (e) {
+                req.result = false;
+                req.reason = e.description;
+                res(req);
+            }
+            break;
+        case 'options.get':
+            getOptions(function(options) {
+                res(options);
             });
-            requestEntry(url, sender, res);
-        } catch(e) {
-            var ret = { result: false, reason: e.description };
-            res(ret);
-        }
-        break;
-    case 'page.load':
-        try{
-            var url = 'http://b.hatena.ne.jp/entry/jsonlite/' + req.url;
-            requestEntry(url, sender, res);
-        } catch(e) {
-            req.result = false;
-            req.reason = e.description;
-            res(req);
-        }
-        break;
-    case 'options.get':
-        res(options);
-        break;
+            break;
+        case 'options.save':
+            saveOptions(req.options, function() {
+                res({ success: true });
+            });
+            break;
     }
+    return true;
 });
 
-//chrome.browserAction.setBadgeBackgroundColor({ color: [0, 96, 255, 200] });
+function requestEntry(url, sender, res) {
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            res({ result: true, content: data });
+        })
+        .catch(error => {
+            res({ result: false, reason: error.message });
+        });
+}
 
-//var counterCaches = {};
 function updateCounter(tabId) {
     chrome.tabs.get(tabId, function(tab) {
         tab.url = tab.url.replace(/#.+$/, '');
-        if (/http:\/\//.test(tab.url)) {
-            chrome.pageAction.show(tab.id);
-//          if (!counterCaches[tab.url]) {
-                var http = new XMLHttpRequest();
-                http.open('GET', 'http://api.b.st-hatena.com/entry.count?url=' + encodeURIComponent(tab.url), true);
-                http.onload = function(res){
-                    if(http.status != 200){ return http.onerror(http.statusText) }
-//                  counterCaches[tab.url] = http.responseText;
-//                  chrome.browserAction.setBadgeText({ text: http.responseText, tabId: tab.id });
-                    chrome.pageAction.setTitle({ title: (http.responseText != '') ? http.responseText + ' users' : '', tabId: tab.id });
-                };
-                http.onerror = function(e){
-//                  counterCaches[tab.url] = '';
-//                  chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
-                    chrome.pageAction.setTitle({ title: 'error', tabId: tab.id });
-                };
-                http.send(null);
-//          } else {
-//              chrome.browserAction.setBadgeText({ text: couterCache[tab.url], tabId: tab.id });
-//          }
-        } else if (/https:\/\//.test(tab.url)) {
-//          chrome.browserAction.setBadgeText({ text: '?', tabId: tab.id });
-            chrome.pageAction.show(tab.id);
-            chrome.pageAction.setTitle({ title: '', tabId: tab.id });
+        if (/https?:\/\//.test(tab.url)) {
+            const url = 'https://api.b.st-hatena.com/entry.count?url=' + encodeURIComponent(tab.url);
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    chrome.action.setBadgeText({ text: text, tabId: tab.id });
+                })
+                .catch(() => {
+                    chrome.action.setBadgeText({ text: '', tabId: tab.id });
+                });
         }
     });
 }
@@ -110,25 +112,26 @@ function initCounter() {
 }
 
 function hideCounter(){
-//  chrome.browserAction.setBadgeText({ text: '' });
+    chrome.browserAction.setBadgeText({ text: '' });
     chrome.windows.getAll({ populate: true }, function(windows) {
         windows.forEach(function(window) {
             window.tabs.forEach(function(tab) {
-//              chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
-                chrome.pageAction.hide(tab.id);
+                chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
             });
         });
     });
     chrome.tabs.onUpdated.removeListener(updateCounter);
 }
-if (!options.HideCounter) {
-    initCounter();
+
+function init() {
+    getOptions(function(options) {
+        if (!options.HideCounter) {
+            initCounter();
+        }
+        chrome.action.setBadgeBackgroundColor({ color: '#009ad0' });
+    });
 }
-function saveOptions(){
-    localStorage.options = JSON.stringify(options);
-    if (options.HideCounter) {
-        hideCounter();
-    } else {
-        initCounter();
-    }
-}
+
+chrome.runtime.onInstalled.addListener(init);
+chrome.runtime.onStartup.addListener(init);
+

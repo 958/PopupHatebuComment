@@ -15,17 +15,16 @@
 	text-indent:0 !important;
 	text-align:left !important;
 	text-decoration:none !important;
-	text-spacing:normal !important;
+	text-wrap: normal !important;
 	text-transform:none !important;
 }
 .__popup_hatebu_comment_container {
 	position:absolute !important;
-	-webkit-border-radius: 5px !important;
-	border: 5px solid #5279E7 !important;
-/*	background: #5279E7 !important;*/
+	border-radius: 5px !important;
+	border: 5px solid #009ad0 !important;
 	background: white !important;
 	z-index: 999 !important;
-	-webkit-box-shadow: 5px 5px 5px gray !important;
+	box-shadow: 5px 5px 5px gray !important;
 }
 .__popup_hatebu_comment_container.__popup_hatebu_comment_loading{
 	background:white url(data:image/gif;base64,R0lGODlhEAAQAKIHAEyEx2ya0Yuv2+rx+avF5Sxuvcvb7////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQJCgAHACwAAAAAEAAQAAADQni63BowHEDBKbi8OOvNG9RRHxZKlZVpTssIsOC+8bzEsn3get8QQMLBQDQcBsiBIigsGpPKA3NYPCaXQSrRivQxEgAh+QQJCgAHACwAAAAAEAAQAAADQni63CpQnEDDARi8OOvNG9RRHxZKlZVpTssQMOEUdKHEclPbBz7Xt9iP5ioeDEjDYcActJLKptMBXTafSSvTyD0kAAAh+QQJCgAHACwAAAAAEAAQAAADQni63EqQHEHFCTi8OOvNG9RRHxZKlZVpTssYsOEANKDEclPbBz7Xt9iP5ioeBsiBo8AsKJLKRtN5TC6bT6sUa3QkAAAh+QQJCgAHACwAAAAAEAAQAAADQHi63GrQHELJEVi8OOvNG9RRHxZKlZVpTssM8OAEdKDEclPbBz7Xt9iP5io6CsjCAcAEtJLKpvOYXDafVamxlQAAIfkECQoABwAsAAAAABAAEAAAA0J4utw6cBxDzSGYvDjrzRvUUR8WSpWVaU7rOkIsvIs804eN5/LuFMDCAUAEHALIgCIoLBqTygNzWDwml0Eq0Yr0MRIAIfkECQoABwAsAAAAABAAEAAAA0J4utx+I45jqnly2usytZj0VU+5FGjhECyhpGrTuge8tm96s6YJ/IBDYBg4CI4CBTBILCKTh6WQaEQqgdNh9dh7JAAAIfkECQoABwAsAAAAABAAEAAAA0F4utxasLhBx4uzXpjplk1lOSQDnIBjrIaCpg3bHq/Kuqi9lvwR/IGDYCg4EI4EBTBILCKTPqCQaEQqpc3qsUdKAAAh+QQFCgAHACwAAAAAEAAQAAADQXi63AoQnEKLO1FW6/Ksl7ddJBmcgTOsg4KmDdser8q6qL2WpeALB4KQcDAYDYofcEg8Ig/K4LB4TP6kQqqRd0kAADs=) 50% 50% no-repeat !important;
@@ -34,7 +33,7 @@
 }
 .__popup_hatebu_comment_container a{
 	cursor:pointer !important;
-	color:#00D !important;
+	color: #55606a !important;
 	background: transparent !important;
 }
 .__popup_hatebu_comment_container a:hover{
@@ -59,9 +58,8 @@
 /*	background-color: white !important;*/
 	clear: both !important;
 	max-height: 400px !important;
-	width: 350px !important;
+	width: 400px !important;
 	overflow: auto !important;
-	border-top: 1px solid #5279E7 !important;
 }
 .__popup_hatebu_comment_container ul:empty{
 	width: 100px !important;
@@ -79,6 +77,8 @@
 	margin: 0 5px !important;
 	padding: 2px 0 !important;
 	display: block !important;;
+}
+.__popup_hatebu_comment_container .__popup_hatebu_comment_user:not(:last-child){
 	border-bottom: 1px solid silver !important;
 }
 .__popup_hatebu_comment_container .__popup_hatebu_comment_icon{
@@ -87,12 +87,12 @@
 }
 .__popup_hatebu_comment_container .__popup_hatebu_comment_name{
 	margin: 0 0.5em !important;
-	color:#00D !important;
+	color:#009ad0 !important;
 	text-decoration:underline !important;
 }
 .__popup_hatebu_comment_container .__popup_hatebu_comment_tags{
 	margin-right: 0.5em !important;
 }
 .__popup_hatebu_comment_container .__popup_hatebu_comment_tags, .__popup_hatebu_comment_container .__popup_hatebu_comment_tags a{
-	color:#66C !important;
+	color: rgba(70,82,94,.8) !important;
 }

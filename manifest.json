@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Popup Hatebu Comment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Popup Hatena Bookmark commments.",
   "content_scripts": [
     {
@@ -11,13 +11,13 @@
       "run_at": "document_end"
     }
   ],
-  "page_action": {
+  "action": {
     "default_icon": "/pa_icon.png",
     "default_title": "Hatea bookmark comments",
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": [ "background.js" ]
+    "service_worker": "background.js"
   },
   "icons": {
     "128": "app_icon_128.png",
@@ -27,8 +27,13 @@
   },
   "options_page": "options.html",
   "permissions": [
+    "scripting",
     "tabs",
-    "http://b.hatena.ne.jp/entry/*",
-    "http://api.b.st-hatena.com/entry.count"
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
   ]
 }
