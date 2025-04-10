@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Popup Hatebu Comment",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Popup Hatena Bookmark commments.",
   "content_scripts": [
     {

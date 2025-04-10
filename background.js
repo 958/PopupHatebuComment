@@ -13,6 +13,10 @@ function getOptions(callback) {
 function saveOptions(options, callback) {
     chrome.storage.local.set({ options: options }, function() {
         if (callback) callback();
+        hideCounter();
+        if (!options.HideCounter) {
+            initCounter();
+        }
     });
 }
 
@@ -112,11 +116,11 @@ function initCounter() {
 }
 
 function hideCounter(){
-    chrome.browserAction.setBadgeText({ text: '' });
+    chrome.action.setBadgeText({ text: '' });
     chrome.windows.getAll({ populate: true }, function(windows) {
         windows.forEach(function(window) {
             window.tabs.forEach(function(tab) {
-                chrome.browserAction.setBadgeText({ text: '', tabId: tab.id });
+                chrome.action.setBadgeText({ text: '', tabId: tab.id });
             });
         });
     });
