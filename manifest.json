@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Popup Hatebu Comment",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Popup Hatena Bookmark commments.",
   "content_scripts": [
     {
@@ -27,7 +27,6 @@
   },
   "options_page": "options.html",
   "permissions": [
-    "scripting",
     "tabs",
     "activeTab",
     "storage"
